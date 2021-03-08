@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from "react-router-dom"
-import { Button, Form, Grid, Header, Segment, Icon, Message } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Segment, Icon } from 'semantic-ui-react'
 import { validateLoginForm } from '../lib/utils'
+import ErrorMessage from "../components/ErrorMessage"
 import styles from "./Home.module.scss"
 
 export default function Home(props) {
@@ -18,7 +19,7 @@ export default function Home(props) {
             setPassword('')
             setError(loginError)
         } else {
-
+            setError("")
             history.push('adresar')
         }
     }
@@ -58,10 +59,7 @@ export default function Home(props) {
             </Grid>
             {
                 error &&
-                <Message negative className={styles.errorMessage}>
-                    <Message.Header>Error with login</Message.Header>
-                    <p>{error}</p>
-                </Message>
+                <ErrorMessage title={"Error with login"} subtitle={error}/>
             }
 
         </div>
