@@ -7,6 +7,7 @@ import ReduxThunk from "redux-thunk"
 import createRootReducer from "../reducers"
 import Home from "../pages/Home"
 import AddressBook from "../pages/AddressBook"
+import Contact from "../pages/Contact"
 
 const preloadedState = undefined;
 
@@ -23,6 +24,7 @@ export default function Routes() {
                 <Switch>
                     <Route path="/" exact component={Home} />
                     <Route path="/adresar" exact component={AddressBook} />
+                    <Route path="/kontakt" exact component={Contact} />
                 </Switch>
             </BrowserRouter>
         </Provider>
