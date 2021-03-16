@@ -19,7 +19,17 @@ const contactsCount = (state = 0, action) => {
     }
 };
 
+const currentContact = (state = {}, action) => {
+    switch (action.type) {
+        case types.SET_CURRENT_CONTACT:
+            return action.contact;
+        default:
+            return state;
+    }
+};
+
 export default combineReducers({
     allContacts,
-    contactsCount
+    contactsCount,
+    currentContact
 });

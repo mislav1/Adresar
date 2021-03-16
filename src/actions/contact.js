@@ -4,7 +4,7 @@ import { CONTACTS_PER_PAGE } from "../lib/constants"
 const db = firebase.database()
 
 
-export function addContact(contact) {
+export function addContact(contact, callback) {
     return async (dispatch, getState) => {
         try {
             dispatch({ type: types.SET_LOADING, loading: true });
@@ -21,6 +21,9 @@ export function addContact(contact) {
             }
 
             dispatch({ type: types.SET_LOADING, loading: false });
+            if (callback) {
+                callback();
+            }
 
         } catch (error) {
             console.log(error)
@@ -102,6 +105,27 @@ export function loadAllContacts(page, filters, orderBy) {
     };
 }
 
+export function loadContactById(id) {
+    return async (dispatch, getState) => {
+        try {
+
+            dispatch({ type: types.SET_LOADING, loading: true });
+
+            await db.ref('contact/' + id)
+                .once('value')
+                .then(dataSnapshot => {
+                    dispatch({ type: types.SET_CURRENT_CONTACT, contact: { ...dataSnapshot.val(), key: dataSnapshot.key } });
+                })
+
+            dispatch({ type: types.SET_LOADING, loading: false });
+
+        } catch (error) {
+            console.log(error)
+            dispatch({ type: types.SET_LOADING, loading: false });
+        }
+    };
+}
+
 
 export function addToFavourite(contact, callback) {
     return async (dispatch, getState) => {
@@ -122,7 +146,9 @@ export function addToFavourite(contact, callback) {
             }
 
             dispatch({ type: types.SET_LOADING, loading: false });
-            callback();
+            if (callback) {
+                callback();
+            }
 
         } catch (error) {
             console.log(error)
@@ -150,7 +176,69 @@ export function removeFromFavourite(contact, callback) {
             }
 
             dispatch({ type: types.SET_LOADING, loading: false });
-            callback();
+            if (callback) {
+                callback();
+            }
+
+        } catch (error) {
+            console.log(error)
+            dispatch({ type: types.SET_LOADING, loading: false });
+        }
+    };
+}
+
+export function editContact(contact, callback) {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: types.SET_LOADING, loading: true });
+            const userId = localStorage.getItem('user-key')
+
+            if (userId) {
+
+                const updatedContact = {
+                    ...contact,
+                }
+                delete updatedContact.key
+
+                let contactRef = db.ref('contact/');
+                contactRef.child(contact.key).update(updatedContact)
+            }
+
+            dispatch({ type: types.SET_LOADING, loading: false });
+            if (callback) {
+                callback();
+            }
+
+        } catch (error) {
+            console.log(error)
+            dispatch({ type: types.SET_LOADING, loading: false });
+        }
+    };
+}
+
+export function removeContact(contact, callback) {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: types.SET_LOADING, loading: true });
+            const userId = localStorage.getItem('user-key')
+
+            if (userId) {
+
+                const updatedContact = {
+                    ...contact,
+                    isFavourite: false
+                }
+                delete updatedContact.key
+
+                let contactRef = db.ref('contact/');
+                contactRef.child(contact.key).remove()
+            }
+
+            dispatch({ type: types.SET_LOADING, loading: false });
+
+            if (callback) {
+                callback();
+            }
 
         } catch (error) {
             console.log(error)

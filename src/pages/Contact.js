@@ -7,8 +7,12 @@ import Calendar from "../components/Calendar"
 import styles from "./Contact.module.scss"
 import { validateContactForm, validateContactSubForm } from "../lib/utils"
 import * as actions from "../actions"
+import { useHistory } from "react-router-dom"
 
 export default function Contact(props) {
+
+    const history = useHistory()
+    const { id } = props.match.params;
 
     const intialContactValues = {
         firstName: '',
@@ -33,11 +37,15 @@ export default function Contact(props) {
     const [subFormError, setSubFormError] = useState("")
 
     const localActions = {
-        addContact: (contact) => dispatch(actions.contact.addContact(contact))
+        addContact: (contact, callback) => dispatch(actions.contact.addContact(contact, callback)),
+        loadContactById: (id) => dispatch(actions.contact.loadContactById(id)),
+        removeContact: (contact, callback) => dispatch(actions.contact.removeContact(contact, callback)),
+        updateContact: (contact, callback) => dispatch(actions.contact.editContact(contact, callback)),
     };
 
     const globalState = {
         isLoading: useSelector(state => state.ui.isLoading),
+        currentContact: useSelector(state => state.contact.currentContact)
     };
 
     const updateContact = (e, data) => {
@@ -59,6 +67,18 @@ export default function Contact(props) {
         console.log(contact.contactType)
     }, [contact.contactType])
 
+    useEffect(() => {
+        if (id) {
+            localActions.loadContactById(id)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (globalState.currentContact.key) {
+            setContact(globalState.currentContact)
+        }
+    }, [globalState.currentContact.key])
+
     const onSubmit = () => {
         const error = validateContactForm(contact)
         const subError = validateContactSubForm(contact)
@@ -70,12 +90,24 @@ export default function Contact(props) {
             setFormError('')
             setSubFormError('')
         }
-        localActions.addContact(contact)
+        localActions.addContact(contact, callback)
+    }
+
+    const onUpdate = () => {
+        localActions.updateContact(contact, callback)
+    }
+
+    const onDelete = () => {
+        localActions.removeContact(contact, callback)
+    }
+
+    const callback = () => {
+        history.push("/adresar")
     }
 
     return (
         <div className={styles.contact}>
-            <Title title="Add new contact" icon="address card" />
+            <Title title={id ? "Edit Contact" : "Add new contact"} icon="address card" />
             <Form>
                 <Form.Field>
                     <label>First Name</label>
@@ -98,7 +130,7 @@ export default function Contact(props) {
                 <Divider hidden></Divider>
                 <Form.Field>
                     <label>Select contact type </label>
-                    <Select placeholder='Select contact type' options={contactOptions} onChange={updateContact} />
+                    <Select placeholder='Select contact type' options={contactOptions} onChange={updateContact} value={contact.contactType} />
                 </Form.Field>
                 {
                     contact.contactType &&
@@ -118,9 +150,22 @@ export default function Contact(props) {
                     subFormError &&
                     <ErrorMessage title={"Error adding a contact"} subtitle={subFormError} />
                 }
-                <Button type='submit' onClick={onSubmit} loading={globalState.isLoading}>
-                    Submit
-                </Button>
+                {
+                    id ?
+                        <div>
+                            <Button type='update' onClick={onUpdate} loading={globalState.isLoading} color="yellow">
+                                Update
+                            </Button>
+                            <Button type='delete' onClick={onDelete} loading={globalState.isLoading} color="red">
+                                Delete
+                            </Button>
+                        </div>
+                        :
+                        <Button type='submit' onClick={onSubmit} loading={globalState.isLoading} color="green">
+                            Submit
+                        </Button>
+                }
+
             </Form>
 
         </div>
