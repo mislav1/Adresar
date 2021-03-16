@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from "react-redux"
 import * as actions from "../actions"
-import { Pagination } from 'semantic-ui-react'
+import { Pagination, Select } from 'semantic-ui-react'
 import ContactCard from "../components/ContactCard"
 import styles from "./AddressBook.module.scss"
 import Title from "../components/Title"
@@ -15,12 +15,19 @@ export default function AddressBook(props) {
         email: ''
     }
 
+    const orderByOptions = [
+        { key: 'asc', value: 'asc', text: 'asc' },
+        { key: 'desc', value: 'desc', text: 'desc' },
+    ]
+
     const dispatch = useDispatch();
     const page = useRef(1)
+    
     const [filters, setFilters] = useState(initialFilters)
+    const [orderBy, setOrderBy] = useState("asc")
 
     const localActions = {
-        loadAllContacts: (page, filters) => dispatch(actions.contact.loadAllContacts(page, filters))
+        loadAllContacts: (page, filters, orderBy) => dispatch(actions.contact.loadAllContacts(page, filters, orderBy))
     };
 
     const globalState = {
@@ -30,12 +37,12 @@ export default function AddressBook(props) {
     };
 
     useEffect(() => {
-        localActions.loadAllContacts(page.current, filters);
+        localActions.loadAllContacts(page.current, filters, orderBy);
     }, [])
 
     const changePage = (e, data) => {
         page.current = data.activePage
-        localActions.loadAllContacts(data.activePage, filters)
+        localActions.loadAllContacts(data.activePage, filters, orderBy)
     }
 
     const onFilterChange = (filter, value) => {
@@ -45,15 +52,28 @@ export default function AddressBook(props) {
         })
     }
 
+    const onChangeOrderBy = (e, data) => {
+        setOrderBy(data.value)
+        localActions.loadAllContacts(page.current, filters, data.value)
+    }
+
+    const onFavouriteUpdated = () => {
+        localActions.loadAllContacts(page.current, filters, orderBy)
+    }
+
     useEffect(() => {
         page.current = 1
-        localActions.loadAllContacts(page.current, filters)
+        localActions.loadAllContacts(page.current, filters, orderBy)
     }, [filters.firstName, filters.lastName, filters.email])
 
     return (
         <div className={styles["address-book-wrapper"]}>
             <Title title="Address Book" icon="address book" />
             <Filters onFilterChange={onFilterChange}/>
+            <div>
+                {"Sorted by Last Name: "}
+                <Select options={orderByOptions} onChange={onChangeOrderBy} defaultValue={orderBy}/>
+            </div>
             {
                 globalState.allContacts.length > 0 &&
                 <>
@@ -61,7 +81,7 @@ export default function AddressBook(props) {
                     <div className={styles["grid-wrapper"]}>
                         {
                             globalState.allContacts.map((contact) => {
-                                return <ContactCard contact={contact} key={contact.key} />
+                                return <ContactCard contact={contact} key={contact.key} callback={onFavouriteUpdated}/>
                             })
                         }
                     </div >
