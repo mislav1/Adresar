@@ -1,11 +1,13 @@
 import React from 'react'
 
-export default function Calendar({ onChange }) {
+export default function Calendar({ onChange = () => { }, value = "" }) {
 
     return (
-        <input 
-            type="date" 
-            value="2018-07-22" 
+        <input
+            type="date"
+            value={value}
+            name="dateOfBirth"
+            onChange={onChange}
         />
     )
 }

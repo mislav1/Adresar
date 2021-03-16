@@ -25,6 +25,7 @@ export default function Routes() {
                     <Route path="/" exact component={Home} />
                     <Route path="/adresar" exact component={AddressBook} />
                     <Route path="/kontakt" exact component={Contact} />
+                    <Route path="/kontakt/detalji/:id" exact component={Contact} />
                 </Switch>
             </BrowserRouter>
         </Provider>

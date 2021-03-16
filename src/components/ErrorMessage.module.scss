@@ -1,9 +1,14 @@
 $message-box-width: 450px;
 $message-box-bottom: 200px;
 
-.errorMessage{
+.errorMessageFixed{
     position: fixed;
     bottom: $message-box-bottom;
+    margin: auto !important;
+    width: $message-box-width;
+}
+
+.errorMessage{
     margin: auto !important;
     width: $message-box-width;
 }

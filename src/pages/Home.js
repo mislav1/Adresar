@@ -81,7 +81,7 @@ export default function Home(props) {
             </Grid>
             {
                 error &&
-                <ErrorMessage title={"Error with login"} subtitle={error} />
+                <ErrorMessage title={"Error with login"} subtitle={error} fixed={true}/>
             }
 
         </div>

@@ -1,0 +1,18 @@
+.address-book-wrapper{
+    margin: 50px;
+    .grid-wrapper{
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-gap: 1em;
+        width: 80%;
+        margin: 20px auto;
+        justify-items: center;
+        align-items: baseline;
+    }
+    .pagination-wrapper{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+    }
+}

@@ -1,0 +1,2 @@
+export const SET_LOADING = "SET_LOADING";
+export const SET_ALL_CONTACTS = "SET_ALL_CONTACTS"
