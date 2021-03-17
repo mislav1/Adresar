@@ -32,7 +32,7 @@ export function addContact(contact, callback) {
     };
 }
 
-export function loadAllContacts(page, filters, orderBy) {
+export function loadAllContacts(page, filters, orderBy, onlyFavourite = false) {
     return async (dispatch, getState) => {
         try {
 
@@ -53,7 +53,7 @@ export function loadAllContacts(page, filters, orderBy) {
                         });
                     })
 
-                if (filters.firstName || filters.lastName || filters.email) {
+                if (filters.firstName || filters.lastName || filters.email || onlyFavourite) {
                     contacts = contacts.filter(c => {
                         if (filters.firstName) {
                             if (!c.firstName.toLowerCase().includes(filters.firstName.toLowerCase())) {
@@ -69,6 +69,10 @@ export function loadAllContacts(page, filters, orderBy) {
                             if (!c.contactType === "Email" || !c.contact.toLowerCase().includes(filters.email.toLowerCase())) {
                                 return false
                             }
+                        }
+
+                        if(onlyFavourite && !c.isFavourite){
+                            return false;
                         }
 
                         return true
@@ -115,9 +119,10 @@ export function loadContactById(id) {
                 .once('value')
                 .then(dataSnapshot => {
                     dispatch({ type: types.SET_CURRENT_CONTACT, contact: { ...dataSnapshot.val(), key: dataSnapshot.key } });
+                    dispatch({ type: types.SET_LOADING, loading: false });
                 })
 
-            dispatch({ type: types.SET_LOADING, loading: false });
+            
 
         } catch (error) {
             console.log(error)
@@ -142,7 +147,7 @@ export function addToFavourite(contact, callback) {
                 delete updatedContact.key
 
                 let contactRef = db.ref('contact/');
-                contactRef.child(contact.key).update(updatedContact)
+                await contactRef.child(contact.key).update(updatedContact)
             }
 
             dispatch({ type: types.SET_LOADING, loading: false });
@@ -172,7 +177,7 @@ export function removeFromFavourite(contact, callback) {
                 delete updatedContact.key
 
                 let contactRef = db.ref('contact/');
-                contactRef.child(contact.key).update(updatedContact)
+                await contactRef.child(contact.key).update(updatedContact)
             }
 
             dispatch({ type: types.SET_LOADING, loading: false });
@@ -201,7 +206,7 @@ export function editContact(contact, callback) {
                 delete updatedContact.key
 
                 let contactRef = db.ref('contact/');
-                contactRef.child(contact.key).update(updatedContact)
+                await contactRef.child(contact.key).update(updatedContact)
             }
 
             dispatch({ type: types.SET_LOADING, loading: false });
@@ -231,7 +236,7 @@ export function removeContact(contact, callback) {
                 delete updatedContact.key
 
                 let contactRef = db.ref('contact/');
-                contactRef.child(contact.key).remove()
+                await contactRef.child(contact.key).remove()
             }
 
             dispatch({ type: types.SET_LOADING, loading: false });

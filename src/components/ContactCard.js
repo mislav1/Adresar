@@ -2,8 +2,9 @@ import React from 'react'
 import { Button, Card, Icon, Header } from 'semantic-ui-react'
 import { useSelector, useDispatch } from "react-redux"
 import * as actions from "../actions"
+import styles from "./ContactCard.module.scss"
 
-export default function ContactCard({ contact, callback }) {
+export default function ContactCard({ contact, callback, onNameClick }) {
     const dispatch = useDispatch();
 
     const localActions = {
@@ -19,8 +20,7 @@ export default function ContactCard({ contact, callback }) {
         <>
             <Card>
                 <Card.Content>
-
-                    <Card.Header>{contact.firstName + " " + contact.lastName}</Card.Header>
+                    <Card.Header className={styles.title} onClick={() => onNameClick(contact.key)}>{contact.firstName + " " + contact.lastName}</Card.Header>
                     <Card.Description>
                         <strong>Contact type: </strong> {contact.contactType}
                     </Card.Description>
@@ -29,7 +29,7 @@ export default function ContactCard({ contact, callback }) {
                     </Card.Description>
                 </Card.Content>
                 <Header as='h2' color='teal' textAlign='center'>
-                    <Icon name={"favorite"} color={contact.isFavourite ? "yellow" : "grey"} onClick={handleClick}/>
+                    <Icon className={styles.icons} name={"favorite"} color={contact.isFavourite ? "yellow" : "grey"} onClick={handleClick}/>
                 </Header>
 
             </Card>

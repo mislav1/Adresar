@@ -64,10 +64,6 @@ export default function Contact(props) {
     }
 
     useEffect(() => {
-        console.log(contact.contactType)
-    }, [contact.contactType])
-
-    useEffect(() => {
         if (id) {
             localActions.loadContactById(id)
         }

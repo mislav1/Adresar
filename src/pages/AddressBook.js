@@ -6,9 +6,12 @@ import ContactCard from "../components/ContactCard"
 import styles from "./AddressBook.module.scss"
 import Title from "../components/Title"
 import Filters from "../components/Filters"
+import { useHistory } from "react-router-dom"
 
 export default function AddressBook(props) {
 
+    const isFavouritesPage = props.match.path.includes("omiljeni")
+    
     const initialFilters = {
         firstName: '',
         lastName: '',
@@ -21,13 +24,14 @@ export default function AddressBook(props) {
     ]
 
     const dispatch = useDispatch();
+    const history = useHistory()
     const page = useRef(1)
     
     const [filters, setFilters] = useState(initialFilters)
     const [orderBy, setOrderBy] = useState("asc")
 
     const localActions = {
-        loadAllContacts: (page, filters, orderBy) => dispatch(actions.contact.loadAllContacts(page, filters, orderBy))
+        loadAllContacts: (page, filters, orderBy, onlyFavourite) => dispatch(actions.contact.loadAllContacts(page, filters, orderBy, onlyFavourite))
     };
 
     const globalState = {
@@ -37,15 +41,18 @@ export default function AddressBook(props) {
     };
 
     useEffect(() => {
-        localActions.loadAllContacts(page.current, filters, orderBy);
+        localActions.loadAllContacts(page.current, filters, orderBy, isFavouritesPage ? true : false);
     }, [])
 
     const changePage = (e, data) => {
         page.current = data.activePage
-        localActions.loadAllContacts(data.activePage, filters, orderBy)
+        localActions.loadAllContacts(data.activePage, filters, orderBy, isFavouritesPage ? true : false)
     }
 
     const onFilterChange = (filter, value) => {
+        if(globalState.isLoading){
+            return
+        }
         setFilters({
             ...filters,
             [filter]: filters ? value.trim() : ''
@@ -54,22 +61,26 @@ export default function AddressBook(props) {
 
     const onChangeOrderBy = (e, data) => {
         setOrderBy(data.value)
-        localActions.loadAllContacts(page.current, filters, data.value)
+        localActions.loadAllContacts(page.current, filters, data.value, isFavouritesPage ? true : false)
     }
 
     const onFavouriteUpdated = () => {
-        localActions.loadAllContacts(page.current, filters, orderBy)
+        localActions.loadAllContacts(page.current, filters, orderBy, isFavouritesPage ? true : false)
+    }
+
+    const onNameClick = (key) => {
+        history.push(`/kontakt/detalji/${key}` )
     }
 
     useEffect(() => {
         page.current = 1
-        localActions.loadAllContacts(page.current, filters, orderBy)
+        localActions.loadAllContacts(page.current, filters, orderBy, isFavouritesPage ? true : false)
     }, [filters.firstName, filters.lastName, filters.email])
 
     return (
         <div className={styles["address-book-wrapper"]}>
-            <Title title="Address Book" icon="address book" />
-            <Filters onFilterChange={onFilterChange}/>
+            <Title title={isFavouritesPage ? "Favourite contacts" : "Address Book"} icon="address book" />
+            <Filters onFilterChange={onFilterChange} filters={filters}/>
             <div>
                 {"Sorted by Last Name: "}
                 <Select options={orderByOptions} onChange={onChangeOrderBy} defaultValue={orderBy}/>
@@ -81,7 +92,7 @@ export default function AddressBook(props) {
                     <div className={styles["grid-wrapper"]}>
                         {
                             globalState.allContacts.map((contact) => {
-                                return <ContactCard contact={contact} key={contact.key} callback={onFavouriteUpdated}/>
+                                return <ContactCard contact={contact} key={contact.key} callback={onFavouriteUpdated} onNameClick={onNameClick}/>
                             })
                         }
                     </div >
