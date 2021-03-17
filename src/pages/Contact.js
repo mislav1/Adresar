@@ -63,8 +63,12 @@ export default function Contact(props) {
     }
 
     const onSubmit = () => {
+        if (globalState.isLoading) {
+            return
+        }
         const error = validateContactForm(contact)
         const subError = validateContactSubForm(contact)
+
         if (error || subError) {
             setFormError(error)
             setSubFormError(subError)
@@ -72,15 +76,15 @@ export default function Contact(props) {
         } else {
             setFormError('')
             setSubFormError('')
+            id ? localActions.updateContact(contact, callback) : localActions.addContact(contact, callback)
         }
-        localActions.addContact(contact, callback)
-    }
 
-    const onUpdate = () => {
-        localActions.updateContact(contact, callback)
     }
 
     const onDelete = () => {
+        if (globalState.isLoading) {
+            return
+        }
         localActions.removeContact(contact, callback)
     }
 
@@ -137,7 +141,7 @@ export default function Contact(props) {
                 {
                     id ?
                         <div>
-                            <Button type='update' onClick={onUpdate} loading={globalState.isLoading} color="yellow">
+                            <Button type='update' onClick={onSubmit} loading={globalState.isLoading} color="yellow">
                                 Update
                             </Button>
                             <Button type='delete' onClick={onDelete} loading={globalState.isLoading} color="red">

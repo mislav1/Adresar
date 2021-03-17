@@ -26,7 +26,7 @@ export const validateContactForm = (contact) => {
 export const validateContactSubForm = (contact) => {
     if (!contact.contactType || !contact.contact) {
         return 'Contact type and contact are required!'
-    } else if (contact.contactType === "email" && !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(contact.contact)) {
+    } else if (contact.contactType === "Email" && !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(contact.contact)) {
         return "Please enter valid email address!"
     }
 

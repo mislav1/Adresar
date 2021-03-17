@@ -16,13 +16,31 @@ export default function AppHeader({path}) {
 
     return (
         <Segment clearing>
-            <Header className={styles.title} as='h2' floated='right' color="teal" onClick={() => goTo("/adresar/omiljeni")}>
+            <Header 
+                className={styles.title} 
+                as='h2' 
+                floated='right' 
+                color={path.endsWith("/adresar/omiljeni") ?  "green" : "teal"} 
+                onClick={() => goTo("/adresar/omiljeni")}
+            >
                 Favourite
             </Header>
-            <Header className={styles.title} as='h2' floated='right' color="teal" onClick={() => goTo("/kontakt")}>
+            <Header 
+                className={styles.title} 
+                as='h2' 
+                floated='right' 
+                color={path.endsWith("/kontakt") ?  "green" : "teal"}  
+                onClick={() => goTo("/kontakt")}
+            >
                 New Contact
             </Header>
-            <Header className={styles.title} as='h2' floated='left' color="teal" onClick={() => goTo("/adresar")}>
+            <Header 
+                className={styles.title} 
+                as='h2' 
+                floated='left' 
+                color={path.endsWith("/adresar") ?  "green" : "teal"}  
+                onClick={() => goTo("/adresar")}
+            >
                 Home
             </Header>
         </Segment>
