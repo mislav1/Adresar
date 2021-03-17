@@ -1,38 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Form, Select, Divider } from 'semantic-ui-react'
 import { useSelector, useDispatch } from "react-redux"
+import { useHistory } from "react-router-dom"
+
 import ErrorMessage from "../components/ErrorMessage"
 import Title from "../components/Title"
 import Calendar from "../components/Calendar"
+import AppHeader from '../components/AppHeader'
 import styles from "./Contact.module.scss"
 import { validateContactForm, validateContactSubForm } from "../lib/utils"
 import * as actions from "../actions"
-import { useHistory } from "react-router-dom"
+import { INITIAL_CONTACT_VALUES, CONTACT_OPTIONS } from "../lib/constants"
 
 export default function Contact(props) {
 
     const history = useHistory()
     const { id } = props.match.params;
 
-    const intialContactValues = {
-        firstName: '',
-        lastName: '',
-        dateOfBirth: '',
-        contactType: null,
-        contact: ''
-    }
-
-    const contactOptions = [
-        { key: 'null', value: null, text: '' },
-        { key: 'mob', value: 'Mobile Phone', text: 'Mobile Phone' },
-        { key: 'fix', value: 'Landline Phone', text: 'Landline Phone' },
-        { key: 'email', value: 'Email', text: 'Email' },
-        { key: 'pager', value: 'Pager', text: 'Pager' },
-    ]
-
     const dispatch = useDispatch();
 
-    const [contact, setContact] = useState(intialContactValues)
+    const [contact, setContact] = useState(INITIAL_CONTACT_VALUES)
     const [formError, setFormError] = useState("")
     const [subFormError, setSubFormError] = useState("")
 
@@ -48,6 +35,18 @@ export default function Contact(props) {
         currentContact: useSelector(state => state.contact.currentContact)
     };
 
+    useEffect(() => {
+        if (id) {
+            localActions.loadContactById(id)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (globalState.currentContact.key) {
+            setContact(globalState.currentContact)
+        }
+    }, [globalState.currentContact.key])
+
     const updateContact = (e, data) => {
         if (data) {
             setContact({
@@ -62,18 +61,6 @@ export default function Contact(props) {
             })
         }
     }
-
-    useEffect(() => {
-        if (id) {
-            localActions.loadContactById(id)
-        }
-    }, [])
-
-    useEffect(() => {
-        if (globalState.currentContact.key) {
-            setContact(globalState.currentContact)
-        }
-    }, [globalState.currentContact.key])
 
     const onSubmit = () => {
         const error = validateContactForm(contact)
@@ -103,8 +90,9 @@ export default function Contact(props) {
 
     return (
         <div className={styles.contact}>
+            <AppHeader path={props.match.path} />
             <Title title={id ? "Edit Contact" : "Add new contact"} icon="address card" />
-            <Form>
+            <Form className={styles["contact-form"]}>
                 <Form.Field>
                     <label>First Name</label>
                     <input placeholder='First Name' onChange={updateContact} value={contact.firstName} name={"firstName"} />
@@ -126,7 +114,7 @@ export default function Contact(props) {
                 <Divider hidden></Divider>
                 <Form.Field>
                     <label>Select contact type </label>
-                    <Select placeholder='Select contact type' options={contactOptions} onChange={updateContact} value={contact.contactType} />
+                    <Select placeholder='Select contact type' options={CONTACT_OPTIONS} onChange={updateContact} value={contact.contactType} />
                 </Form.Field>
                 {
                     contact.contactType &&

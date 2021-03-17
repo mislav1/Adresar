@@ -1,10 +1,12 @@
+@import "../styles/variables.scss";
+
 .address-book-wrapper{
-    margin: 50px;
+    margin: 0 50px;
     .grid-wrapper{
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         grid-gap: 1em;
-        width: 80%;
+        width: $formWidth;
         margin: 20px auto;
         justify-items: center;
         align-items: baseline;

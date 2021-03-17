@@ -1,6 +1,7 @@
 import React from 'react'
-import { Button, Card, Icon, Header } from 'semantic-ui-react'
-import { useSelector, useDispatch } from "react-redux"
+import { Card, Icon, Header } from 'semantic-ui-react'
+import { useDispatch } from "react-redux"
+
 import * as actions from "../actions"
 import styles from "./ContactCard.module.scss"
 

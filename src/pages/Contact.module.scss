@@ -1,6 +1,13 @@
+@import "../styles/variables.scss";
+
 .contact{
     display: flex;
     flex-direction: column;
-    width: 50%;
-    margin: 50px auto
+    margin: 0 50px;
+    
+    .contact-form{
+        width: $formWidth;
+        margin: auto;
+    }
 }
+

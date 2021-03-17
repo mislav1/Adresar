@@ -8,6 +8,7 @@ import createRootReducer from "../reducers"
 import Home from "../pages/Home"
 import AddressBook from "../pages/AddressBook"
 import Contact from "../pages/Contact"
+import NotFound from "../pages/NotFound"
 
 const preloadedState = undefined;
 
@@ -27,6 +28,7 @@ export default function Routes() {
                     <Route path="/adresar/omiljeni" exact component={AddressBook} />
                     <Route path="/kontakt/detalji/:id" exact component={Contact} />
                     <Route path="/kontakt" exact component={Contact} />
+                    <Route component={NotFound} />
                 </Switch>
             </BrowserRouter>
         </Provider>

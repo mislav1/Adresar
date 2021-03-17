@@ -1,5 +1,4 @@
-$message-box-width: 450px;
-$message-box-bottom: 200px;
+@import "../styles/variables.scss";
 
 .errorMessageFixed{
     position: fixed;
